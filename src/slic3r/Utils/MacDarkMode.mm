@@ -13,6 +13,22 @@ namespace GUI {
 
 bool mac_dark_mode()
 {
+    // The check for dark mode returns false positive on 10.12 and 10.13,
+    // which allowed setting dark menu bar and dock area. If allowed, this
+    // is detected as dark mode. Therefore, check that we are running on
+    // at least 10.14, where the proper dark mode was first introduced.
+    bool supports_dark_mode = false;
+
+    #ifdef NSAppKitVersionNumber10_14
+    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_14)
+    {
+        supports_dark_mode = true;
+    }    
+    #endif
+
+    if (! supports_dark_mode)
+        return false;
+
     NSString *style = [[NSUserDefaults standardUserDefaults] stringForKey:@"AppleInterfaceStyle"];
     return style && [style isEqualToString:@"Dark"];
 
